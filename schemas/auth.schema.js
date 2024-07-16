@@ -26,13 +26,10 @@ const loginSchema = Joi.object({
         'string.email': 'Please provide a valid email address!'
     }),
     password: Joi.string()
-        .min(6)
-        .pattern(new RegExp('^(?=.*[0-9])(?=.*[!@#$%^&*])'))
         .required()
         .messages({
-            'any.required': 'Password is required!',
-            'string.min': 'Password must be at least {#limit} characters long',
-            'string.pattern.base': 'Password must contain at least one number and one special character'
+            'any.required': 'Password is required!', // provide a custom message for required
+            'string.empty': 'Please provide a password', // handle empty password string
         })
 });
 

@@ -2,6 +2,8 @@ import os
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 import tensorflow as tf
+from tensorflow.keras.models import load_model
+from tensorflow.keras.layers import BatchNormalization
 import numpy as np
 from PIL import Image
 
@@ -14,7 +16,8 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 # Load the TensorFlow model
-model = tf.keras.models.load_model('tf_model/model.h5')
+model = tf.keras.models.load_model(
+    'tf_model/model.h5', custom_objects={'BatchNormalization': BatchNormalization})
 
 lesion_type_dict = {
     'nv': 'Melanocytic nevi',
@@ -78,5 +81,6 @@ def predict():
 if __name__ == '__main__':
     host = '127.0.0.1'
     port = 3000
+    print(tf.keras.layers)
     print(f"Server running on http://{host}:{port}")
     app.run(debug=True)
