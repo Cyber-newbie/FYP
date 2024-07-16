@@ -14,7 +14,7 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 # Load the TensorFlow model
-model = tf.keras.models.load_model('tf_model/enhanced_model.h5')
+model = tf.keras.models.load_model('tf_model/model.h5')
 
 lesion_type_dict = {
     'nv': 'Melanocytic nevi',
@@ -51,7 +51,11 @@ def predict():
     if file:
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
+
+        try:
+            file.save(file_path)
+        except Exception as e:
+            return jsonify({'error': f'Failed to save file: {str(e)}'}), 500
 
         try:
             # Preprocess the image
@@ -73,6 +77,6 @@ def predict():
 
 if __name__ == '__main__':
     host = '127.0.0.1'
-    port = 5000
+    port = 3000
     print(f"Server running on http://{host}:{port}")
     app.run(debug=True)

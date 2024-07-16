@@ -1,70 +1,49 @@
 const express = require('express');
-const multer = require('multer');
-const path =  require('path')
-const fs = require('fs');
-const jpeg = require('jpeg-js')
-const tf = require('@tensorflow/tfjs-node');
+const cors = require('cors')
+//path to env config/.env
+require('dotenv').config({
+    path: './config/.env'
+})
+const connectDB = require('./config/db');
+const authRoute = require('./routes/auth.route')
 // Initialize the Express app
 const app = express();
+app.use(cors())
 app.use(express.json())
-const port = 3000;
+app.use(express.urlencoded({
+    extended: true
+}))
+const port = process.env.PORT || 5050;
+connectDB()
 
-// Configure Multer for file uploads
-const upload = multer({ dest: 'uploads/' });
-
-// Function to load and preprocess the image
-const loadImage = (path) => {
-    const buffer = fs.readFileSync(path);
-    const pixels = jpeg.decode(buffer, true);
-    let tensor = tf.node.decodeImage(buffer, 3); // Decode image as RGB
-    tensor = tf.image.resizeBilinear(tensor, [75, 100]); // Resize to the expected dimensions
-    tensor = tensor.div(255.0); // Normalize to [0, 1]
-    tensor = tensor.expandDims(0); // Add batch dimension
-    console.log('tesnor: ', tensor)
-    return tensor;
-};
-
-// Function to load the TensorFlow model
-const loadModel = async () => {
-    const modelPath = path.join(__dirname, 'tf_model', 'enhanced_model.h5');
-    const model = await tf.loadGraphModel(`file://${modelPath}`);
-    return model;
-};
-
-// Endpoint to handle image upload and make predictions
-app.post('/predict', upload.single('image'), async (req, res) => {
-    console.log(req.file)
-    if (!req.file) {
-        return res.status(400).send('No file uploaded.');
-    }
-
-    try {
-        // Load and preprocess the image
-        const input = loadImage(req.file.path);
-        
-        // Load the model
-        const model = await loadModel();
-
-        // Make predictions
-        // const output = model.predict(input);
-        console.log('results: ', input)
-
-        // Get the predicted class
-        // const predictions = output.dataSync();
-        // const predictedClass = predictions.indexOf(Math.max(...predictions));
-
-        // Send the result back to the client
-        // res.json({ predictions, predictedClass });
-    } catch (error) {
-        console.error('Error processing the image:', error.message);
-        res.status(500).send('Internal server error');
-    } finally {
-        // Clean up the uploaded file
-        fs.unlinkSync(req.file.path);
-    }
-});
+//routes
+app.use('/api/auth', authRoute)
 
 // Start the server
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Server running on port ${port}`);
+});
+
+server.on('error', (error) => {
+    process.kill(process.pid)
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
+    process.exit(0)
+})
+
+const shutdown = () => {
+    server.close(() => {
+        console.log('Server gracefully terminated');
+        process.exit(0);
+    });
+};
+
+
+
+// Handle nodemon restarts
+process.on('SIGUSR2', () => {
+    server.close(() => {
+        console.log('Server gracefully terminated due to nodemon restart');
+        process.kill(process.pid, 'SIGUSR2');
+    });
 });
