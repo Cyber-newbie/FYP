@@ -1,6 +1,5 @@
-Flask==2.2.2
-numpy==1.23.0
-pandas==1.4.3
-Pillow==9.2.0
-tensorflow==2.15
-Werkzeug==2.2.2
+Flask
+tensorflow
+numpy
+Pillow
+Werkzeug
