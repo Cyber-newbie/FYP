@@ -16,8 +16,7 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 # Load the TensorFlow model
-model = tf.keras.models.load_model(
-    'tf_model/model.h5', custom_objects={'BatchNormalization': BatchNormalization})
+model = tf.keras.models.load_model('tf_model/enhanced_model.h5')
 
 lesion_type_dict = {
     'nv': 'Melanocytic nevi',
@@ -81,6 +80,5 @@ def predict():
 if __name__ == '__main__':
     host = '127.0.0.1'
     port = 3000
-    print(tf.keras.layers)
     print(f"Server running on http://{host}:{port}")
     app.run(debug=True)

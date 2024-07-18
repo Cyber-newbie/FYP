@@ -6,9 +6,12 @@ require('dotenv').config({
 })
 const connectDB = require('./config/db');
 const authRoute = require('./routes/auth.route')
+const patientRoute = require('./routes/patient.route')
 // Initialize the Express app
 const app = express();
-app.use(cors())
+app.use(cors({
+    origin: '*'
+}))
 app.use(express.json())
 app.use(express.urlencoded({
     extended: true
@@ -18,7 +21,7 @@ connectDB()
 
 //routes
 app.use('/api/auth', authRoute)
-
+app.use('/api/patient', patientRoute)
 // Start the server
 const server = app.listen(port, () => {
     console.log(`Server running on port ${port}`);

@@ -8,7 +8,8 @@ const signUp = async (req, res) => {
 
     if (user) {
         res.status(400).json({
-            msg: 'email already exist'
+            success: false,
+            error: 'email already exist'
         })
     } else {
 
@@ -25,6 +26,7 @@ const signUp = async (req, res) => {
             })
         } catch (error) {
             return res.status(500).json({
+                success: false,
                 error: error.message
             });
 
@@ -44,7 +46,8 @@ const login = async (req, res) => {
         })
         if (!user) {
             return res.status(400).json({
-                email: 'You are not signed up. Please Create account'
+                success: false,
+                error: 'You are not signed up. Please Create account'
             })
         }
         const isMatch = await bcrypt.compare(password, user.password)
@@ -62,11 +65,13 @@ const login = async (req, res) => {
             })
         } else {
             return res.status(400).json({
-                password: 'Incorrect email/password'
+                success: false,
+                error: 'Incorrect email/password'
             })
         }
     } catch (error) {
         return res.status(500).json({
+            success: false,
             error: error.message
         });
     }

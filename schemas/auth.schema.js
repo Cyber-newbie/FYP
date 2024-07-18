@@ -14,10 +14,10 @@ const registerSchema = Joi.object({
             'any.required': 'Password is required',
             'string.pattern.base': 'Password must contain at least one number and one special character'
         }),
-    role: Joi.string().valid('admin', 'doctor', 'patient').required().messages({
-        'any.required': 'Please provide role',
-        'any.only': 'Role must be one of admin, doctor or patient'
-    }),
+    // role: Joi.string().valid('admin', 'doctor', 'patient').required().messages({
+    //     'any.required': 'Please provide role',
+    //     'any.only': 'Role must be one of admin, doctor or patient'
+    // }),
 })
 
 const loginSchema = Joi.object({
