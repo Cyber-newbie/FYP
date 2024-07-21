@@ -49,6 +49,7 @@ const getHistories = async (req, res) => {
         }).populate('patientId');
         const data = []
         for (const hist of history) {
+            const _id = hist._id
             const patientId = hist.patientId._id
             const patientName = hist.patientId.firstName
             const doctorId = hist.doctorId
@@ -61,6 +62,7 @@ const getHistories = async (req, res) => {
             }).sort((a, b) => b.prediction - a.prediction);
 
             data.push({
+                _id,
                 patientId,
                 patientName,
                 doctorId,
@@ -88,20 +90,24 @@ const getPatientHistory = async (req, res) => {
         id
     } = req.params;
     try {
-        const patient = await Patient.findOne({
+        const history = await History.findOne({
             _id: id
         })
-        console.log(patient)
+        const patient = await Patient.findOne({
+            _id: history.patientId
+        })
+        console.log("history", history)
+        console.log("patient", patient)
         if (!patient) return res.status(400).json({
             success: false,
             error: 'patient not found'
         })
-        const history = await History.find({
-            patientId: patient._id
-        })
         return res.status(200).json({
             success: true,
-            data: history
+            data: {
+                patient,
+                history
+            }
         })
     } catch (error) {
         return res.status(400).json({
