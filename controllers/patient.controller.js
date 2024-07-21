@@ -22,6 +22,35 @@ const getPatients = async (req, res) => {
 
 }
 
+const getPatientById = async (req, res) => {
+
+    const {
+        id
+    } = req.params;
+    const doctorId = req.user.id
+    try {
+        const patientData = await Patient.findOne({
+            _id: id,
+            doctorId
+        });
+        if (!patientData) {
+            return res.status(404).json({
+                success: false,
+                error: 'Patient not found'
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            data: patientData
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 const addPatient = async (req, res, next) => {
     console.log('adddding')
     const doctorId = req.user.id
@@ -117,6 +146,7 @@ const deletePatient = async (req, res) => {
 
 module.exports = {
     getPatients,
+    getPatientById,
     addPatient,
     updatePatient,
     deletePatient

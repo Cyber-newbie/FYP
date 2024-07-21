@@ -10,12 +10,12 @@ const historySchema = new mongoose.Schema({
         ref: 'user',
         required: true
     },
-    predictons: [{
-        type: String
-    }]
+    predictions: [{
+        type: Number
+    }],
 
 }, {
     timestamps: true
 })
 
-module.exports = patient = mongoose.model('patient', patientSchema)
+module.exports = History = mongoose.model('history', historySchema)

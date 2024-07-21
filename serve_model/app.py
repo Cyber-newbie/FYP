@@ -6,8 +6,9 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.layers import BatchNormalization
 import numpy as np
 from PIL import Image
-
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -16,7 +17,7 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 # Load the TensorFlow model
-model = tf.keras.models.load_model('tf_model/enhanced_model.h5')
+model = tf.keras.models.load_model('tf_model/rsmodel.h5')
 
 lesion_type_dict = {
     'nv': 'Melanocytic nevi',
@@ -78,7 +79,4 @@ def predict():
 
 
 if __name__ == '__main__':
-    host = '127.0.0.1'
-    port = 3000
-    print(f"Server running on http://{host}:{port}")
-    app.run(debug=True)
+    app.run(host='127.0.0.1', port=5000)

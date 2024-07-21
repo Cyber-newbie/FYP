@@ -13,12 +13,14 @@ const {
     addPatient,
     deletePatient,
     updatePatient,
-    getPatients
+    getPatients,
+    getPatientById
 } = require('../controllers/patient.controller')
 const router = express.Router()
 router.get('/', verifyToken, getPatients)
+router.get('/:id', verifyToken, getPatientById)
 router.post('/add', validate(patientSchema), verifyToken, addPatient)
 router.put('/update', validate(updatePatientSchema), verifyToken, updatePatient)
-router.delete('/delete', verifyToken, deletePatient)
+router.post('/delete', verifyToken, deletePatient)
 
 module.exports = router
